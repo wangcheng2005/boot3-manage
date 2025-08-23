@@ -43,6 +43,11 @@ public class DictTypeEntity extends AbstractBaseEntity {
     private String name;
 
     /**
+     * 字典类型code
+     */
+    private String code;
+
+    /**
      * 排序值
      */
     private Integer sort;

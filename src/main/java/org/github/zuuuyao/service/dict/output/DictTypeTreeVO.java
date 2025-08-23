@@ -40,6 +40,12 @@ public class DictTypeTreeVO extends BaseOutputIdAndTimeAndOperationDTO implement
     private String name;
 
     /**
+     * 编码
+     */
+    @Schema(description = "编码", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String code;
+
+    /**
      * 排序值
      */
     @Schema(description = "排序值")

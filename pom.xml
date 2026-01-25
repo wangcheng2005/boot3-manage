@@ -44,6 +44,7 @@
         <sa-token.version>1.38.0</sa-token.version>
         <common-io.version>2.4</common-io.version>
         <velocity.version>1.7</velocity.version>
+        <playwright.version>1.57.0</playwright.version>
     </properties>
 
     <dependencies>
@@ -129,6 +130,12 @@
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
             <version>${knife4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${playwright.version}</version>
         </dependency>
 
         <!--端点监控-->

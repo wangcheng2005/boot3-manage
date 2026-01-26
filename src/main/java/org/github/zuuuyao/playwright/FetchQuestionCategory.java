@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -130,6 +131,8 @@ public class FetchQuestionCategory {
         entity.setCategoryId(qc.key);
         entity.setCreator(1);
         entity.setUpdater(1);
+        entity.setCreateTime(LocalDateTime.now());
+        entity.setUpdateTime(LocalDateTime.now());
 
         // 使用 MyBatis 的 insert 操作；insert 后 entity.id 应该被回填（基于项目配置）
         questionCategoryRepository.insert(entity);

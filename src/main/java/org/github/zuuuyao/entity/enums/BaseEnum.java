@@ -1,7 +1,5 @@
 package org.github.zuuuyao.entity.enums;
 
-import cn.harry.sys.vo.DictDataRes;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;

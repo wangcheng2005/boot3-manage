@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharSet;
 import org.apache.ibatis.executor.BatchResult;
@@ -1001,5 +1005,37 @@ class BootManageApplicationTests {
 
         List<ITreeNode<Long>> iTreeNodes = TreeUtil.listToTree(resourcesEntities);
         System.out.println();
+    }
+
+    @Test
+    public void testGenCode() throws TesseractException {
+
+//        Mat src = Imgcodecs.imread("test.png");
+//        Mat gray = new Mat();
+//        Imgproc.cvtColor(src, gray, Imgproc.COLOR_BGR2GRAY);
+//
+//        Mat binary = new Mat();
+//        Imgproc.threshold(
+//                gray,
+//                binary,
+//                0,
+//                255,
+//                Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU
+//        );
+//
+//        Imgcodecs.imwrite("binary.png", binary);
+
+        ITesseract tesseract = new Tesseract();
+        tesseract.setDatapath("C:\\Program Files\\Tesseract-OCR\\tessdata");
+        tesseract.setLanguage("eng");
+        tesseract.setTessVariable("tessedit_char_whitelist", "0123456789");
+        tesseract.setPageSegMode(7);
+        tesseract.setTessVariable("user_defined_dpi", "3000");
+
+
+
+        String result = tesseract.doOCR(new File("d:\\001.png"));
+        System.out.println(result);
+
     }
 }

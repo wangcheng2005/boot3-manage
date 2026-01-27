@@ -64,6 +64,7 @@ public class SaTokenConfigure implements WebMvcConfigurer {
                         "/auth/captcha",
                         "/doc.html",
                         "/admin/**",
+                        "/ccgp-sichuan/**",
                         "/swagger-ui/**",
                         "/swagger-resources/**",
                         "/swagger-resources",

@@ -13,7 +13,6 @@ public class QuestionAnswerDetail {
 
     /**
      * 类型
-     * @see cn.harry.sys.enums.QuestionTypeEnums
      */
     private Integer type;
 

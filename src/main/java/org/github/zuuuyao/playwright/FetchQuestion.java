@@ -4,13 +4,22 @@ import cn.hutool.json.JSONUtil;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.LoadState;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import jakarta.annotation.Resource;
+import org.github.zuuuyao.service.QuestionImportService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class FetchQuestion {
+
+    @Resource
+    private QuestionImportService questionImportService;
+
+
     /**
      * Fetch questions via Playwright. Returns total number of questions fetched (qsNum or total from API), or -1 on error.
      */
@@ -121,6 +130,7 @@ public class FetchQuestion {
                     System.out.println("page " + pi + " parsed=" + pr);
 
                     // 将 list 元素里面的 map 转换为 Question 对象并处理
+                    List<QuestionDetail> list = new ArrayList<>();
                     if (pr != null && pr.body != null && pr.body.list != null) {
                         System.out.println("page " + pi + " list size=" + pr.body.list.size());
                         totalFetched += pr.body.list.size();
@@ -142,6 +152,7 @@ public class FetchQuestion {
                                 if (rawBody != null) {
                                     String json = JSONUtil.toJsonStr(rawBody);
                                     QuestionDetail qd = JSONUtil.toBean(json, QuestionDetail.class);
+                                    list.add(qd);
                                     System.out.println("    detail parsed for " + q.id + " => " + qd);
                                 } else {
                                     System.out.println("    no body found for detail of " + q.id);
@@ -153,6 +164,7 @@ public class FetchQuestion {
 
                         }
                     }
+                    questionImportService.saveFetchedQuestions(list);
 
                 } catch (PlaywrightException e) {
                     System.out.println("evaluate failed for pi=" + pi + ": " + e.getMessage());

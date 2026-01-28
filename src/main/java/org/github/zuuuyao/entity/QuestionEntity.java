@@ -71,7 +71,7 @@ public class QuestionEntity extends BaseEntity {
     /**
      * 题目权限
      */
-    private String questionPermission;
+    private Integer questionPermission;
     /**
      * 枚举状态: disable:禁用, enable:启用
      */

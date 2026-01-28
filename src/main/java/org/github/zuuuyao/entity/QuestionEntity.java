@@ -56,6 +56,7 @@ public class QuestionEntity extends BaseEntity {
     /**
      * 是否考试题: 0: 否, 1: 是
      */
+    private Integer isExam;
     /**
      * 是否练习题: 0: 否, 1: 是
      */

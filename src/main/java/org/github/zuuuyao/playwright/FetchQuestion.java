@@ -49,8 +49,9 @@ public class FetchQuestion {
             page.fill("input[formcontrolname='password']", "000000");
             page.click("button[type=submit]");
 
-            page.waitForURL("**/question-bank/**");
+//            page.waitForURL("**/question-bank/**");
             page.waitForLoadState(LoadState.NETWORKIDLE);
+            page.waitForTimeout(2000);
 
             // 尝试从 localStorage/cookies 中读取 token（如果后端需要额外的 token header）
             String token = null;
@@ -113,7 +114,7 @@ public class FetchQuestion {
 
             // 循环抓取每一页
             int totalFetched = 0;
-            for (int pi = 1; pi <= totalPages; ++pi) {
+            for (int pi = 1; pi <= 1; ++pi) {
                 try {
                     Object pageResult = page.evaluate(String.format("""
               () => fetch('/api/question?pi=%d&ps=%d&auditStatus=verified&nature=2', { credentials: 'include' })

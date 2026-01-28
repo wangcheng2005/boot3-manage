@@ -51,12 +51,12 @@ public class QuestionImportServiceImpl implements QuestionImportService {
         for (QuestionDetail q : questions) {
             QuestionEntity entity = mapToEntity(q, false, null);
             if (entity != null) {
-                questionRepository.insert(entity);
+//                questionRepository.insert(entity);
                 count++;
 
                 // 处理子题：直接插入子题并设置 parentId
                 List<QuestionDetail> subQuestion = q.subQuestion;
-                count += insertSubQuestions(entity.getId(), subQuestion);
+//                count += insertSubQuestions(entity.getId(), subQuestion);
             }
         }
         return count;
@@ -93,6 +93,8 @@ public class QuestionImportServiceImpl implements QuestionImportService {
         QuestionEntity e = new QuestionEntity();
         e.setCreateTime(LocalDateTime.now());
         e.setUpdateTime(LocalDateTime.now());
+        e.setCreator(1);
+        e.setUpdater(1);
         // content + 图片处理
         String content = processContentImages(q, e);
         e.setContent(content);
@@ -111,6 +113,7 @@ public class QuestionImportServiceImpl implements QuestionImportService {
         e.setIsReal(1);
         e.setIsEssence(1);
         e.setIsPractice(1);
+        e.setIsExam(1);
         e.setIsEnglish(0);
 
         int attribute = quessAttribute(q);

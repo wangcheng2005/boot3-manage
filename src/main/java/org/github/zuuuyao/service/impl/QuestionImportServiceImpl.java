@@ -19,11 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -47,23 +43,33 @@ public class QuestionImportServiceImpl implements QuestionImportService {
         if (CollUtil.isEmpty(questions)) {
             return 0;
         }
+        // A1 A2 普通题, 单选
+        // A3/A4 有子题
+        // B型 C型 有子题, 共用选项
+        // X型, 多选
+        // 不定项选择题, 和X型一样, 多选
+        // 案例分析题  带子题的多选
+
+
+
+
         int count = 0;
         for (QuestionDetail q : questions) {
             QuestionEntity entity = mapToEntity(q, false, null);
             if (entity != null) {
-//                questionRepository.insert(entity);
+                questionRepository.insert(entity);
                 count++;
 
                 // 处理子题：直接插入子题并设置 parentId
                 List<QuestionDetail> subQuestion = q.subQuestion;
-//                count += insertSubQuestions(entity.getId(), subQuestion);
+                count += insertSubQuestions(entity, subQuestion);
             }
         }
         return count;
     }
 
     // 插入子题，返回插入数量
-    private int insertSubQuestions(Integer parentId, List<QuestionDetail> subQuestion) {
+    private int insertSubQuestions(QuestionEntity parentId, List<QuestionDetail> subQuestion) {
         if (subQuestion == null || subQuestion.isEmpty()) {
             return 0;
         }
@@ -86,7 +92,7 @@ public class QuestionImportServiceImpl implements QuestionImportService {
      * - examable -> isReal (考试题)；exercise -> isPractice；boutique -> isEssence
      * - options/answers -> QuestionAnswerDetail（基础结构，选项按 originOrder/answerSeq 排序）
      */
-    private QuestionEntity mapToEntity(QuestionDetail q, boolean isSubQuestion, Integer parentId) {
+    private QuestionEntity mapToEntity(QuestionDetail q, boolean isSubQuestion, QuestionEntity parent) {
         if (q == null) {
             return null;
         }
@@ -99,15 +105,19 @@ public class QuestionImportServiceImpl implements QuestionImportService {
         String content = processContentImages(q, e);
         e.setContent(content);
 
+
         // 查询分类
-        LambdaQueryWrapper<QuestionCategoryEntity> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(QuestionCategoryEntity::getCategoryId, q.category);
-        List<QuestionCategoryEntity> categories = questionCategoryRepository.selectList(queryWrapper);
-        List<Integer> categoryList = categories.stream().map(QuestionCategoryEntity::getId).collect(Collectors.toList());
+        List<Integer> categoryList = new ArrayList<>();
+        if (CollUtil.isNotEmpty(q.category)) {
+            LambdaQueryWrapper<QuestionCategoryEntity> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.in(QuestionCategoryEntity::getCategoryId, q.category);
+            List<QuestionCategoryEntity> categories = questionCategoryRepository.selectList(queryWrapper);
+            categoryList = categories.stream().map(QuestionCategoryEntity::getId).collect(Collectors.toList());
+        }
         e.setQuestionCategoryIds(categoryList);
         e.setQuestionLabelsIds(Collections.emptyList());
         e.setSystemType(1);
-        QuestionTypeEnums type = guessType(q);
+        QuestionTypeEnums type = guessType(q, parent);
         e.setType(type.getCode());
         e.setAnswerType(type.getQuestionAnswerTypeEnums().getCode());
         e.setIsReal(1);
@@ -134,7 +144,7 @@ public class QuestionImportServiceImpl implements QuestionImportService {
         }
 
         // note: hasImage already set above based on q.describe
-        e.setParentId(isSubQuestion ? parentId : null);
+        e.setParentId(isSubQuestion ? parent.getId() : null);
         e.setSort(isSubQuestion ? q.orders : 0);
         e.setExplanation(q.analysis);
         e.setRemark(q.mark);
@@ -144,7 +154,7 @@ public class QuestionImportServiceImpl implements QuestionImportService {
         e.setSubCount(subQuestion == null || isSubQuestion ? 0 : subQuestion.size());
 
         // 组装答案/选项
-        e.setAnswer(buildAnswerDetail(q, type));
+        e.setAnswer(buildAnswerDetail(q, type, parent));
 
         return e;
     }
@@ -223,17 +233,30 @@ public class QuestionImportServiceImpl implements QuestionImportService {
         };
     }
 
-    private QuestionTypeEnums guessType(QuestionDetail q) {
+    private QuestionTypeEnums guessType(QuestionDetail q, QuestionEntity parent) {
+        if (parent != null) {
+            return QuestionTypeEnums.parseByCode(parent.getType());
+        }
         if (q == null || q.type == null) {
             return QuestionTypeEnums.A2;
         }
         String t = q.type;
-        if ("A1".equals(t)) {
-            return QuestionTypeEnums.A1;
-        } else if ("case".equals(t)) {
-            return QuestionTypeEnums.CASE;
-        }
-        return QuestionTypeEnums.A2;
+        return switch (t) {
+            case "A1" -> QuestionTypeEnums.A1;
+            case "A2" -> QuestionTypeEnums.A2;
+            case "A3/A4" -> QuestionTypeEnums.A3A4;
+            case "B" -> QuestionTypeEnums.B;
+            case "C" -> QuestionTypeEnums.C;
+            case "X" -> QuestionTypeEnums.X;
+            case "fill" -> QuestionTypeEnums.FILL;
+            case "judge" -> QuestionTypeEnums.JUDGE;
+            case "Q" -> QuestionTypeEnums.QA;
+            case "explain" -> QuestionTypeEnums.EXPLAIN;
+            case "brief" -> QuestionTypeEnums.BRIEF;
+            case "case" -> QuestionTypeEnums.CASE;
+            case "indefinite" -> QuestionTypeEnums.INDEFINITE;
+            default -> QuestionTypeEnums.A2;
+        };
     }
 
     private Integer mapDifficulty(String difficultyName) {
@@ -244,17 +267,82 @@ public class QuestionImportServiceImpl implements QuestionImportService {
         return switch (dn) {
             case "简单", "easy" -> 1;
             case "中等", "common" -> 2;
-            case "困难", "hard" -> 3;
+            case "较难", "hard" -> 3;
             default -> null;
         };
     }
 
-    private QuestionAnswerDetail buildAnswerDetail(QuestionDetail q, QuestionTypeEnums type) {
+    private QuestionAnswerDetail buildAnswerDetail(QuestionDetail q, QuestionTypeEnums type, QuestionEntity parent) {
         if (q == null) {
             return null;
         }
         QuestionAnswerDetail detail = new QuestionAnswerDetail();
         detail.setType(type.getQuestionAnswerTypeEnums().getCode());
+
+        // 问答题单独处理
+        if (QuestionTypeEnums.QA == type || QuestionTypeEnums.EXPLAIN == type || QuestionTypeEnums.BRIEF == type) {
+            detail.setFillAnswers(Collections.emptyList());
+            detail.setOptions(Collections.emptyList());
+            detail.setAnswer(Collections.emptyList());
+            detail.setAnswer(Arrays.asList(q.answers));
+            return detail;
+        }
+
+        // 判断题单独处理
+        if (QuestionTypeEnums.JUDGE == type) {
+            List<QuestionAnswerOptionItem> options = q.options.stream()
+                    .map(it -> {
+                        QuestionAnswerOptionItem item = new QuestionAnswerOptionItem();
+                        item.setContent(it.describe);
+                        item.setValue(it.correct ? "true" : "false");
+                        item.setCorrect(it.correct ? 1 : 0);
+                        return item;
+                    }).collect(Collectors.toList());
+            detail.setFillAnswers(Collections.emptyList());
+            detail.setOptions(options);
+            detail.setAnswer(Collections.emptyList());
+            List<String> answers = options.stream().filter(it -> it.getCorrect() == 1)
+                    .map(QuestionAnswerOptionItem::getValue)
+                    .collect(Collectors.toList());
+            detail.setAnswer(answers);
+            return detail;
+        }
+
+        // 填空题单独处理
+        if (QuestionTypeEnums.FILL == type) {
+            List<FillQuestionAnswerOptionItem> options = q.options.stream()
+                    .map(it -> {
+                        FillQuestionAnswerOptionItem item = new FillQuestionAnswerOptionItem();
+                        item.setIndex(it.answerSeq);
+                        item.setValue(Arrays.asList(it.describe));
+                        return item;
+                    }).collect(Collectors.toList());
+            detail.setOptions(Collections.emptyList());
+            detail.setFillAnswers(options);
+            detail.setAnswer(Collections.emptyList());
+            return detail;
+        }
+
+        // B型题单独处理
+        if ((QuestionTypeEnums.B == type || QuestionTypeEnums.C == type) && parent != null) {
+            // 组装选项
+            String answer = q.answers;
+            List<QuestionAnswerOptionItem> options = parent.getAnswer().getOptions().stream()
+                    .map(it -> {
+                        QuestionAnswerOptionItem item = new QuestionAnswerOptionItem();
+                        item.setContent(it.getContent());
+                        item.setCorrect(answer.equals(it.getValue()) ? 1 : 0);
+                        item.setValue(it.getValue());
+                        return item;
+                    }).collect(Collectors.toList());
+            detail.setOptions(options);
+            List<String> answers = options.stream().filter(it -> it.getCorrect() == 1)
+                    .map(QuestionAnswerOptionItem::getValue)
+                    .collect(Collectors.toList());
+            detail.setAnswer(answers);
+            detail.setFillAnswers(Collections.emptyList());
+            return detail;
+        }
 
         // 组装选项
         List<QuestionAnswerOptionItem> options = q.options.stream()
@@ -270,6 +358,7 @@ public class QuestionImportServiceImpl implements QuestionImportService {
                 .map(QuestionAnswerOptionItem::getValue)
                 .collect(Collectors.toList());
         detail.setAnswer(answers);
+        detail.setFillAnswers(Collections.emptyList());
         return detail;
     }
 

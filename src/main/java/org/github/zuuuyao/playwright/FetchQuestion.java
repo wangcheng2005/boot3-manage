@@ -28,7 +28,7 @@ public class FetchQuestion {
 
             Browser browser = playwright.chromium().launch(
                     new BrowserType.LaunchOptions()
-                            .setHeadless(false)
+                            .setHeadless(true)
             );
 
             BrowserContext context = browser.newContext(
@@ -76,7 +76,7 @@ public class FetchQuestion {
             Object result = null;
             try {
                 result = page.evaluate("""
-            () => fetch('/api/question?pi=1&ps=20&auditStatus=verified&nature=2', { credentials: 'include' })
+            () => fetch('/api/question?pi=1&ps=20&auditStatus=verified&categories=050db755955f45d18ea25d70740dea71&categories=22110919441701590309296968634583&nature=1', { credentials: 'include' })
               .then(async r => {
                 const status = r.status;
                 const ok = r.ok;
@@ -112,12 +112,15 @@ public class FetchQuestion {
                 System.out.println("Error parsing result: " + e);
             }
 
+//            https://examon.mvwchina.com/api/question?pi=1&ps=20&categories=050db755955f45d18ea25d70740dea71&categories=22110919441701590309296968634583&nature=1
+
+
             // 循环抓取每一页
             int totalFetched = 0;
-            for (int pi = 1; pi <= 1; ++pi) {
+            for (int pi = 1; pi <= totalPages; ++pi) {
                 try {
                     Object pageResult = page.evaluate(String.format("""
-              () => fetch('/api/question?pi=%d&ps=%d&auditStatus=verified&nature=2', { credentials: 'include' })
+              () => fetch('/api/question?pi=%d&ps=%d&auditStatus=verified&categories=050db755955f45d18ea25d70740dea71&categories=22110919441701590309296968634583&nature=1&hasImg=false', { credentials: 'include' })
                 .then(async r => {
                   const status = r.status;
                   const ok = r.ok;
@@ -132,7 +135,7 @@ public class FetchQuestion {
 
                     // 将 list 元素里面的 map 转换为 Question 对象并处理
                     List<QuestionDetail> list = new ArrayList<>();
-                    if (pr != null && pr.body != null && pr.body.list != null) {
+                     if (pr != null && pr.body != null && pr.body.list != null) {
                         System.out.println("page " + pi + " list size=" + pr.body.list.size());
                         totalFetched += pr.body.list.size();
                         int idx = 0;

@@ -1,0 +1,75 @@
+2026-02-01 10:16:17.587 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-02-01 10:16:17.619 [main] INFO  org.github.zuuuyao.BootManageApplicationTests - Starting BootManageApplicationTests using Java 17.0.17 with PID 20136 (started by wangc in D:\work\boot3-manage)
+2026-02-01 10:16:17.620 [main] INFO  org.github.zuuuyao.BootManageApplicationTests - The following 1 profile is active: "prod"
+2026-02-01 10:16:18.871 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-02-01 10:16:18.874 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-02-01 10:16:18.933 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 41 ms. Found 0 Redis repository interfaces.
+2026-02-01 10:16:19.542 [main] INFO  o.g.z.config.mybatis.MybatisPlusConfiguration - Mybatis-plus拦截器加载...
+2026-02-01 10:16:19.542 [main] INFO  o.g.z.config.mybatis.MybatisPlusConfiguration - Mybatis-plus分页插件加载...
+2026-02-01 10:16:20.339 [main] INFO  o.github.zuuuyao.config.security.SaTokenConfigure - 加载 saToken JWT 插件中...
+2026-02-01 10:16:20.347 [main] INFO  org.github.zuuuyao.config.web.WebMvcConfiguration - 加载 jackson JavaTimeModule 序列化与反序列化.........
+2026-02-01 10:16:20.562 [main] INFO  o.github.zuuuyao.config.security.SaTokenConfigure - 加载 Sa-Token 拦截器中...
+2026-02-01 10:16:20.578 [main] INFO  org.github.zuuuyao.config.web.WebMvcConfiguration - 配置跨域处理.........
+2026-02-01 10:16:21.773 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2026-02-01 10:16:21.853 [main] INFO  org.github.zuuuyao.BootManageApplicationTests - Started BootManageApplicationTests in 4.691 seconds (process running for 6.041)
+2026-02-01 10:16:21.858 [main] INFO  org.github.zuuuyao.BootManageApplication - 
+
+----------------------------------------------------------
+    Application 'boot-manage' is running! Access URLs:
+    Local: http://localhost:8085
+    External: http://192.168.25.1:8085
+    Doc Knife4j-ui: http://192.168.25.1:8085/doc.html
+    Doc Swagger-ui: http://192.168.25.1:8085/swagger-ui/5.10.3/index.html
+----------------------------------------------------------
+
+2026-02-01 10:16:21.859 [main] INFO  org.github.zuuuyao.BootManageApplication - Application boot-manage Started Successfully !
+2026-02-01 10:17:09.204 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-02-01 10:17:09.229 [main] INFO  org.github.zuuuyao.BootManageApplicationTests - Starting BootManageApplicationTests using Java 17.0.17 with PID 6712 (started by wangc in D:\work\boot3-manage)
+2026-02-01 10:17:09.230 [main] INFO  org.github.zuuuyao.BootManageApplicationTests - The following 1 profile is active: "prod"
+2026-02-01 10:17:10.285 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-02-01 10:17:10.288 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-02-01 10:17:10.329 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 25 ms. Found 0 Redis repository interfaces.
+2026-02-01 10:17:10.835 [main] INFO  o.g.z.config.mybatis.MybatisPlusConfiguration - Mybatis-plus拦截器加载...
+2026-02-01 10:17:10.835 [main] INFO  o.g.z.config.mybatis.MybatisPlusConfiguration - Mybatis-plus分页插件加载...
+2026-02-01 10:17:11.592 [main] INFO  o.github.zuuuyao.config.security.SaTokenConfigure - 加载 saToken JWT 插件中...
+2026-02-01 10:17:11.601 [main] INFO  org.github.zuuuyao.config.web.WebMvcConfiguration - 加载 jackson JavaTimeModule 序列化与反序列化.........
+2026-02-01 10:17:11.801 [main] INFO  o.github.zuuuyao.config.security.SaTokenConfigure - 加载 Sa-Token 拦截器中...
+2026-02-01 10:17:11.815 [main] INFO  org.github.zuuuyao.config.web.WebMvcConfiguration - 配置跨域处理.........
+2026-02-01 10:17:12.993 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2026-02-01 10:17:13.073 [main] INFO  org.github.zuuuyao.BootManageApplicationTests - Started BootManageApplicationTests in 4.218 seconds (process running for 5.42)
+2026-02-01 10:17:13.079 [main] INFO  org.github.zuuuyao.BootManageApplication - 
+
+----------------------------------------------------------
+    Application 'boot-manage' is running! Access URLs:
+    Local: http://localhost:8085
+    External: http://192.168.25.1:8085
+    Doc Knife4j-ui: http://192.168.25.1:8085/doc.html
+    Doc Swagger-ui: http://192.168.25.1:8085/swagger-ui/5.10.3/index.html
+----------------------------------------------------------
+
+2026-02-01 10:17:13.079 [main] INFO  org.github.zuuuyao.BootManageApplication - Application boot-manage Started Successfully !
+2026-02-01 10:18:18.853 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-02-01 10:18:18.881 [main] INFO  org.github.zuuuyao.BootManageApplicationTests - Starting BootManageApplicationTests using Java 17.0.17 with PID 6888 (started by wangc in D:\work\boot3-manage)
+2026-02-01 10:18:18.882 [main] INFO  org.github.zuuuyao.BootManageApplicationTests - The following 1 profile is active: "prod"
+2026-02-01 10:18:19.973 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-02-01 10:18:19.976 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-02-01 10:18:20.014 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 23 ms. Found 0 Redis repository interfaces.
+2026-02-01 10:18:20.559 [main] INFO  o.g.z.config.mybatis.MybatisPlusConfiguration - Mybatis-plus拦截器加载...
+2026-02-01 10:18:20.559 [main] INFO  o.g.z.config.mybatis.MybatisPlusConfiguration - Mybatis-plus分页插件加载...
+2026-02-01 10:18:21.323 [main] INFO  o.github.zuuuyao.config.security.SaTokenConfigure - 加载 saToken JWT 插件中...
+2026-02-01 10:18:21.331 [main] INFO  org.github.zuuuyao.config.web.WebMvcConfiguration - 加载 jackson JavaTimeModule 序列化与反序列化.........
+2026-02-01 10:18:21.552 [main] INFO  o.github.zuuuyao.config.security.SaTokenConfigure - 加载 Sa-Token 拦截器中...
+2026-02-01 10:18:21.563 [main] INFO  org.github.zuuuyao.config.web.WebMvcConfiguration - 配置跨域处理.........
+2026-02-01 10:18:22.674 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2026-02-01 10:18:22.751 [main] INFO  org.github.zuuuyao.BootManageApplicationTests - Started BootManageApplicationTests in 4.259 seconds (process running for 5.337)
+2026-02-01 10:18:22.756 [main] INFO  org.github.zuuuyao.BootManageApplication - 
+
+----------------------------------------------------------
+    Application 'boot-manage' is running! Access URLs:
+    Local: http://localhost:8085
+    External: http://192.168.25.1:8085
+    Doc Knife4j-ui: http://192.168.25.1:8085/doc.html
+    Doc Swagger-ui: http://192.168.25.1:8085/swagger-ui/5.10.3/index.html
+----------------------------------------------------------
+
+2026-02-01 10:18:22.757 [main] INFO  org.github.zuuuyao.BootManageApplication - Application boot-manage Started Successfully !

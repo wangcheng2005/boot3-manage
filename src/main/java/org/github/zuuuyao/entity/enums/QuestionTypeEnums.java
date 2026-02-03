@@ -3,6 +3,8 @@ package org.github.zuuuyao.entity.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.github.zuuuyao.entity.QuestionEntity;
+import org.github.zuuuyao.playwright.QuestionDetail;
 
 /**
  * 题型类型
@@ -89,4 +91,13 @@ public enum QuestionTypeEnums {
     private final String name;
     private final DictColorEnums dictColorEnums;
     private final QuestionAnswerTypeEnums questionAnswerTypeEnums;
+
+    public static  QuestionTypeEnums parseByCode(int code) {
+        for (QuestionTypeEnums typeEnum : QuestionTypeEnums.values()) {
+            if (typeEnum.getCode() == code) {
+                return typeEnum;
+            }
+        }
+        return null;
+    }
 }

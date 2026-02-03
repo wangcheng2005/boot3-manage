@@ -1030,11 +1030,11 @@ class BootManageApplicationTests {
         tesseract.setLanguage("eng");
         tesseract.setTessVariable("tessedit_char_whitelist", "0123456789");
         tesseract.setPageSegMode(7);
-        tesseract.setTessVariable("user_defined_dpi", "3000");
+        tesseract.setTessVariable("user_defined_dpi", "2400");
 
 
 
-        String result = tesseract.doOCR(new File("d:\\001.png"));
+        String result = tesseract.doOCR(new File("d:\\getVerify.jpg"));
         System.out.println(result);
 
     }

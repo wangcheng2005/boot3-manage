@@ -269,7 +269,7 @@ public class QuestionImportServiceImpl implements QuestionImportService {
             case "简单", "easy" -> 1;
             case "中等", "common" -> 2;
             case "较难", "hard" -> 3;
-            default -> null;
+            default -> 2;
         };
     }
 

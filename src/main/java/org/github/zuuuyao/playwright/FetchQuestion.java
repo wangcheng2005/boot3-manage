@@ -33,6 +33,9 @@ public class FetchQuestion {
 
         QuestionTypeEnums[] values = QuestionTypeEnums.values();
         for (QuestionTypeEnums value : values) {
+            if(value.getCode() == 1 || value.getCode() == 2){
+                continue;
+            }
             fetchQuestionsInternal(categoriesParam, value.getValue());
         }
         return 0;

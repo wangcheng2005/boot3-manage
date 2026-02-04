@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.github.zuuuyao.playwright.FetchQuestion;
 import org.github.zuuuyao.playwright.FetchQuestionCategory;
+import org.github.zuuuyao.playwright.dto.FetchQuestionsInputDTO;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,5 +32,11 @@ public class FetchQuestionCategoryController {
     @PostMapping(value = "/questions", produces = MediaType.APPLICATION_JSON_VALUE)
     public Integer fetchQuestions() {
         return fetchQuestion.fetchQuestions();
+    }
+
+    @Operation(summary = "抓取题目(按分类传入)")
+    @PostMapping(value = "/questions-by-categories", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Integer fetchQuestionsByCategories(@RequestBody FetchQuestionsInputDTO input) {
+        return fetchQuestion.fetchQuestions(input);
     }
 }

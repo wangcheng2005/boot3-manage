@@ -4,14 +4,16 @@ import cn.hutool.json.JSONUtil;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.LoadState;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.annotation.Resource;
+import org.github.zuuuyao.entity.enums.QuestionTypeEnums;
+import org.github.zuuuyao.playwright.dto.FetchQuestionsInputDTO;
 import org.github.zuuuyao.service.QuestionImportService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class FetchQuestion {
@@ -21,9 +23,29 @@ public class FetchQuestion {
 
 
     /**
-     * Fetch questions via Playwright. Returns total number of questions fetched (qsNum or total from API), or -1 on error.
+     * 新的入口：接受 DTO 指定 categories
+     */
+    public int fetchQuestions(FetchQuestionsInputDTO input) {
+        String categoriesParam = "050db755955f45d18ea25d70740dea71"; // default
+        if (input != null && input.getCategories() != null && !input.getCategories().isEmpty()) {
+            categoriesParam = input.getCategories().stream().collect(Collectors.joining("&categories="));
+        }
+
+        QuestionTypeEnums[] values = QuestionTypeEnums.values();
+        for (QuestionTypeEnums value : values) {
+            fetchQuestionsInternal(categoriesParam, value.getValue());
+        }
+        return 0;
+    }
+
+    /**
+     * 保留无参旧入口，指向新的实现，使用默认分类
      */
     public int fetchQuestions() {
+        return fetchQuestions(null);
+    }
+
+    private int fetchQuestionsInternal(String categoriesParam, String type) {
         try (Playwright playwright = Playwright.create()) {
 
             Browser browser = playwright.chromium().launch(
@@ -57,8 +79,11 @@ public class FetchQuestion {
             String token = null;
             try {
                 Object t = page.evaluate("() => localStorage.getItem('token')");
-                if (t != null) token = t.toString();
-            } catch (Exception ignored) {}
+                if (t != null) {
+                    token = t.toString();
+                }
+            } catch (Exception ignored) {
+            }
 
             if (token == null) {
                 try {
@@ -69,14 +94,15 @@ public class FetchQuestion {
                             break;
                         }
                     }
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
 
             // 调接口获取第一页，解析 total 确定页数
             Object result = null;
             try {
-                result = page.evaluate("""
-            () => fetch('/api/question?pi=1&ps=20&auditStatus=verified&categories=050db755955f45d18ea25d70740dea71&categories=22110919441701590309296968634583&nature=1', { credentials: 'include' })
+                result = page.evaluate(String.format("""
+            () => fetch('/api/question?pi=1&ps=20&categories=%s&type=%s&nature=1', { credentials: 'include' })
               .then(async r => {
                 const status = r.status;
                 const ok = r.ok;
@@ -88,7 +114,7 @@ public class FetchQuestion {
                   return { status, ok, body: text };
                 }
               })
-          """);
+          """, categoriesParam, type));
             } catch (PlaywrightException e) {
                 System.out.println("evaluate failed: " + e.getMessage());
                 return -1;
@@ -97,7 +123,9 @@ public class FetchQuestion {
             System.out.println("raw result class=" + (result == null ? "null" : result.getClass()) + ", value=" + result);
 
             ApiResult apiResult = null;
-            if (result instanceof Map) apiResult = new ApiResult((Map<?, ?>) result);
+            if (result instanceof Map) {
+                apiResult = new ApiResult((Map<?, ?>) result);
+            }
             System.out.println("parsed apiResult: " + apiResult);
 
             // 解析 result 中的 total 属性, 再按每页20条计算总页数, 然后循环抓取所有页的数据
@@ -105,8 +133,10 @@ public class FetchQuestion {
             int totalPages = 1;
             try {
                 int total = 0;
-                if (apiResult != null && apiResult.body != null) total = apiResult.body.total;
-                totalPages = Math.max(1, (total + pageSize - 1) / pageSize);
+                if (apiResult != null && apiResult.body != null) {
+                    total = apiResult.body.total;
+                }
+                totalPages = Math.min(500, (total + pageSize - 1) / pageSize);
                 System.out.println("total=" + total + ", totalPages=" + totalPages + ", qsNum=" + (apiResult != null && apiResult.body != null ? apiResult.body.qsNum : 0));
             } catch (Exception e) {
                 System.out.println("Error parsing result: " + e);
@@ -120,22 +150,24 @@ public class FetchQuestion {
             for (int pi = 1; pi <= totalPages; ++pi) {
                 try {
                     Object pageResult = page.evaluate(String.format("""
-              () => fetch('/api/question?pi=%d&ps=%d&auditStatus=verified&categories=050db755955f45d18ea25d70740dea71&categories=22110919441701590309296968634583&nature=1&hasImg=false', { credentials: 'include' })
+              () => fetch('/api/question?pi=%d&ps=%d&categories=%s&type=%s&nature=1', { credentials: 'include' })
                 .then(async r => {
                   const status = r.status;
                   const ok = r.ok;
                   try { const json = await r.clone().json(); return { status, ok, body: json }; }
                   catch (e) { const text = await r.clone().text(); return { status, ok, body: text }; }
                 })
-            """, pi, pageSize));
+            """, pi, pageSize, categoriesParam, type));
 
                     ApiResult pr = null;
-                    if (pageResult instanceof Map) pr = new ApiResult((Map<?, ?>) pageResult);
+                    if (pageResult instanceof Map) {
+                        pr = new ApiResult((Map<?, ?>) pageResult);
+                    }
                     System.out.println("page " + pi + " parsed=" + pr);
 
                     // 将 list 元素里面的 map 转换为 Question 对象并处理
                     List<QuestionDetail> list = new ArrayList<>();
-                     if (pr != null && pr.body != null && pr.body.list != null) {
+                    if (pr != null && pr.body != null && pr.body.list != null) {
                         System.out.println("page " + pi + " list size=" + pr.body.list.size());
                         totalFetched += pr.body.list.size();
                         int idx = 0;
@@ -146,12 +178,18 @@ public class FetchQuestion {
                             try {
                                 Object detail = page.evaluate("args => { const id = args[0]; const token = args[1]; const headers = { 'X-Requested-With': 'XMLHttpRequest', 'Referer': 'https://examon.mvwchina.com/question-bank/self-question-list' }; if (token) headers['token'] = token; return fetch('/api/question/' + id, { credentials: 'include', headers }).then(async r => { const status = r.status; const ok = r.ok; try { const json = await r.clone().json(); return { status, ok, body: json }; } catch (e) { const text = await r.clone().text(); return { status, ok, body: text }; } }); }", new Object[] { q.id, token });
                                 ApiResult detailResult = null;
-                                if (detail instanceof Map) detailResult = new ApiResult((Map<?, ?>) detail);
+                                if (detail instanceof Map) {
+                                    detailResult = new ApiResult((Map<?, ?>) detail);
+                                }
 
                                 // extract body and build QuestionDetail
                                 Object rawBody = null;
-                                if (detail instanceof Map) rawBody = ((Map<?, ?>) detail).get("body");
-                                if ((rawBody == null || rawBody.toString().isEmpty()) && detailResult != null && detailResult.rawBodyString != null) rawBody = detailResult.rawBodyString;
+                                if (detail instanceof Map) {
+                                    rawBody = ((Map<?, ?>) detail).get("body");
+                                }
+                                if ((rawBody == null || rawBody.toString().isEmpty()) && detailResult != null && detailResult.rawBodyString != null) {
+                                    rawBody = detailResult.rawBodyString;
+                                }
 
                                 if (rawBody != null) {
                                     String json = JSONUtil.toJsonStr(rawBody);

@@ -102,7 +102,8 @@ public class QuestionImportServiceImpl implements QuestionImportService {
         e.setCreator(1);
         e.setUpdater(1);
         // content + 图片处理
-        String content = processContentImages(q, e);
+//        String content = processContentImages(q, e);
+        String content = q.describe;
         e.setContent(content);
 
 
@@ -250,7 +251,7 @@ public class QuestionImportServiceImpl implements QuestionImportService {
             case "X" -> QuestionTypeEnums.X;
             case "fill" -> QuestionTypeEnums.FILL;
             case "judge" -> QuestionTypeEnums.JUDGE;
-            case "Q" -> QuestionTypeEnums.QA;
+            case "Q&A" -> QuestionTypeEnums.QA;
             case "explain" -> QuestionTypeEnums.EXPLAIN;
             case "brief" -> QuestionTypeEnums.BRIEF;
             case "case" -> QuestionTypeEnums.CASE;

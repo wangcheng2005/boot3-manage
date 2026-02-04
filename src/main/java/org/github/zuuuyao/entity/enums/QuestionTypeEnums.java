@@ -21,32 +21,32 @@ public enum QuestionTypeEnums {
     /**
      * A1型
      */
-    A1(1, "a1", "A1型题", DictColorEnums.PRIMARY, QuestionAnswerTypeEnums.SINGLE),
+    A1(1, "A1", "A1型题", DictColorEnums.PRIMARY, QuestionAnswerTypeEnums.SINGLE),
 
     /**
      * A2型
      */
-    A2(2, "a2", "A2型题", DictColorEnums.SUCCESS, QuestionAnswerTypeEnums.SINGLE),
+    A2(2, "A2", "A2型题", DictColorEnums.SUCCESS, QuestionAnswerTypeEnums.SINGLE),
 
     /**
      * A3/A4型
      */
-    A3A4(3, "a3/a4", "A3/A4型题", DictColorEnums.DANGER, QuestionAnswerTypeEnums.SINGLE),
+    A3A4(3, "A3/A4", "A3/A4型题", DictColorEnums.DANGER, QuestionAnswerTypeEnums.SINGLE),
 
     /**
      * B型
      */
-    B(4, "b", "B型题", DictColorEnums.DEFAULT, QuestionAnswerTypeEnums.SINGLE),
+    B(4, "B", "B型题", DictColorEnums.DEFAULT, QuestionAnswerTypeEnums.SINGLE),
 
     /**
      * C型
      */
-    C(5, "c", "C型题", DictColorEnums.DEFAULT, QuestionAnswerTypeEnums.SINGLE),
+    C(5, "C", "C型题", DictColorEnums.DEFAULT, QuestionAnswerTypeEnums.SINGLE),
 
     /**
      * X型
      */
-    X(6, "x", "X型题", DictColorEnums.DEFAULT, QuestionAnswerTypeEnums.INDEFINITE),
+    X(6, "X", "X型题", DictColorEnums.DEFAULT, QuestionAnswerTypeEnums.INDEFINITE),
 
     /**
      * 填空
@@ -62,7 +62,7 @@ public enum QuestionTypeEnums {
      * 问答
      */
 
-    QA(9, "q&a", "问答题", DictColorEnums.DEFAULT, QuestionAnswerTypeEnums.TEXT),
+    QA(9, "Q&A", "问答题", DictColorEnums.DEFAULT, QuestionAnswerTypeEnums.TEXT),
 
     /**
      * 名称解释
